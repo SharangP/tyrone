@@ -20,6 +20,10 @@ class Database(object):
     with self.conn:
       self.cur.execute('INSERT INTO link_categories VALUES(?,?)', [link_hash, c_id])
 
+  def add_click(self, link_hash, num_clicks, time):
+    with self.conn:
+      self.cur.execute('INSERT INTO clicks VALUES(?,?,?)', [link_hash, num_clicks, time])
+
   def category_id(self, category):
     try:
       return self.categories.index(category)
