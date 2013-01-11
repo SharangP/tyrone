@@ -5,14 +5,30 @@ class Database(object):
     self.conn = lite.connect(db_file)
     self.cur = self.conn.cursor()
     with self.conn:
-      self.cur.execute('CREATE TABLE links (id INTEGER NOT NULL, hash VARCHAR(10), PRIMARY KEY(id));')
-      self.cur.execute('CREATE TABLE clicks (id INTEGER NOT NULL, l_id INTEGER NOT NULL, num INTEGER, time INTEGER, PRIMARY KEY(id), FOREIGN KEY(l_id) REFERENCES links(id));')
-      self.cur.execute('CREATE TABLE categories (id INTEGER NOT NULL, name VARCHAR(100), PRIMARY KEY(id));')
-      self.cur.execute('CREATE TABLE link_categories (id INTEGER NOT NULL, l_id INTEGER NOT NULL, c_id INTEGER NOT NULL, PRIMARY KEY(id), FOREIGN KEY(l_id) REFERENCES links(id), FOREIGN KEY(c_id) REFERENCES categories(id));')
-      categories = ["advertising", "agriculture", "art", "automotive", "aviation", "banking", "business", "celebrity", "computer", "disasters", "drugs", "economics", "education", "energy", "entertainment", "fashion", "finance", "food", "games", "health", "hobbies", "humor", "intellectual property", "labor", "legal", "lgbt", "marriage", "military", "mobile devices", "news", "philosophy", "politics", "real estate", "reference", "science", "sexuality", "shopping", "social media", "sports", "technology", "travel", "weapons", "weather"]
+      self.cur.execute('CREATE TABLE IF NOT EXISTS clicks (hash VARCHAR(10), num INTEGER, time INTEGER, PRIMARY KEY(hash, time));')
+      self.cur.execute('CREATE TABLE IF NOT EXISTS categories (c_id INTEGER PRIMARY KEY, name VARCHAR(100));')
+      self.cur.execute('CREATE TABLE IF NOT EXISTS link_categories (hash VARCHAR(10), c_id INTEGER NOT NULL, PRIMARY KEY(hash, c_id), FOREIGN KEY(c_id) REFERENCES categories(c_id));')
+      self.categories = ["advertising", "agriculture", "art", "automotive", "aviation", "banking", "business", "celebrity", "computer", "disasters", "drugs", "economics", "education", "energy", "entertainment", "fashion", "finance", "food", "games", "health", "hobbies", "humor", "intellectual property", "labor", "legal", "lgbt", "marriage", "military", "mobile devices", "news", "philosophy", "politics", "real estate", "reference", "science", "sexuality", "shopping", "social media", "sports", "technology", "travel", "weapons", "weather", "none"]
 
-      n = 1
-      for category in categories:
-        with self.conn:
-          self.cur.execute('INSERT INTO categories VALUES(?,?)', (n, category))
-        n = n + 1
+      self.cur.execute('SELECT * FROM categories;')
+      if len(self.cur.fetchall()) == 0:
+        for category in self.categories:
+          with self.conn:
+            self.cur.execute('INSERT INTO categories(name) VALUES(?)', [category])
+
+  def add_category(self, link_hash, c_id):
+    with self.conn:
+      self.cur.execute('INSERT INTO link_categories VALUES(?,?)', [link_hash, c_id])
+
+  def add_click(self, link_hash, num_clicks, time):
+    with self.conn:
+      self.cur.execute('INSERT INTO clicks VALUES(?,?,?)', [link_hash, num_clicks, time])
+
+  def category_id(self, category):
+    try:
+      return self.categories.index(category)
+    except ValueError, e:
+      return self.categories.index("none")
+
+  def categories(self):
+    return self.categories
