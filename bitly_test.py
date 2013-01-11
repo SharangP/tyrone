@@ -1,13 +1,9 @@
 import bitly_api
 import time
 
-C = bitly_api.Connection(access_token='20dbd7d26d6f4d7c9c6d70b22236797b48a7b7af')
+C = bitly_api.Connection(access_token='61c2b3d767d10e5a58b62d0c7ee1bfa856ac69f8')
 
-while True:
-    hotphrases = C.realtime_hot_phrases()
-    print 'BEGIN NEW SET OF PHRASES'
-    for phrase in hotphrases:
-        print 'START'
-        print phrase#, C.realtime_clickrate(phrase)
-        print 'END'
-    time.sleep(2)
+hotphrases = C.highvalue(limit=10000)
+print 'BEGIN NEW SET OF PHRASES'
+for link in hotphrases['values']:
+  print C.clicks_by_day(shortUrl=link)[0]['clicks'], C.info(link=link)[0]['title']
