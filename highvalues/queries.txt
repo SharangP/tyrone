@@ -1,0 +1,10 @@
+average num of NON ZERO data points for certain hashes excluding 0 rows, lower limit of 100
+    remove 'where num !=0' to include datapoints where num=0
+    remove 'where T.c>100' to include hashes with less than 100 clicks (during recording)
+
+select avg(T.c)
+from (select count(*) as c
+    from clicks
+    where num !=0
+    group by hash) as T
+where T.c>100;
