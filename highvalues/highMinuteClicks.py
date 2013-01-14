@@ -5,7 +5,7 @@ from db import Database
 C = bitly_api.Connection(access_token='61c2b3d767d10e5a58b62d0c7ee1bfa856ac69f8')
 Links = {}
 Clicks = {}
-DB = Database('bitly1.db')
+DB = Database('bitly1')
 
 while True:
     hot = C.highvalue(limit=300)
