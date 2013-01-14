@@ -8,7 +8,7 @@ class Database(object):
       try:
         self.cur.execute('CREATE TABLE IF NOT EXISTS hvalues (hash VARCHAR(255), time INTEGER, PRIMARY KEY(hash, time));')
         self.cur.execute('CREATE TABLE IF NOT EXISTS phrases (phrase VARCHAR(255), visitors INTEGER, time INTEGER, PRIMARY KEY(phrase, time));')
-        self.cur.execute('CREATE TABLE IF NOT EXISTS bursting_phrases (phrase VARCHAR(255), visitors INTEGER, time INTEGER, mean REAL, rate REAL, std REAM, PRIMARY KEY(phrase, time));')
+        self.cur.execute('CREATE TABLE IF NOT EXISTS bursting_phrases (phrase VARCHAR(255), visitors INTEGER, time INTEGER, mean REAL, rate REAL, std REAL, PRIMARY KEY(phrase, time));')
 
       except Exception, err:
         print ('SQL BROKE: %s\n' % str(err))
