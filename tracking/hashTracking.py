@@ -12,6 +12,7 @@ errors = 0
 
 while True:
     try:
+        T = int(time.time())
         high = C.highvalue(limit=100)
         hot = C.realtime_hot_phrases()
         bursting = C.realtime_bursting_phrases()
@@ -19,24 +20,26 @@ while True:
         print 'new'
         for V in high['values']:
             HighPhrases[V] = True
-            DB.high_phrase(V.split('bit.ly/')[1],time.time())
-            print V, time.time()
+            DB.high_phrase(V.split('bit.ly/')[1],T)
+            print V, T
 
         for P in hot:
             phrase = P['phrase']
             HotPhrases[phrase] = sum(map(lambda x:x['visitors'],P['ghashes']))
-            DB.hot_phrase(phrase,time.time(),HotPhrases[phrase])
-            print phrase, time.time(), HotPhrases[phrase]
+            DB.hot_phrase(phrase,T,HotPhrases[phrase])
+            print phrase, T, HotPhrases[phrase]
 
         for P in bursting:
             phrase = P['phrase']
             BurstingPhrases[phrase] = sum(map(lambda x:x['visitors'],P['ghashes']))
-            DB.bursting_phrase(phrase,time.time(),BurstingPhrases[phrase],P['mean'],P['rate'],P['std'])
-            print phrase, time.time(), BurstingPhrases[phrase], P['mean'], P['rate'], P['std']
+            DB.bursting_phrase(phrase,T,BurstingPhrases[phrase],P['mean'],P['rate'],P['std'])
+            print phrase, T, BurstingPhrases[phrase], P['mean'], P['rate'], P['std']
 
         errors = 0
 
-        time.sleep(5*60) #repeat every 5 mins
+        sleep_time = T - int(time.time()) + 5*60 
+        print 'SLEEPING FOR ', sleep_time
+        time.sleep(sleep_time) #repeat every 5 mins
 
     except Exception,er:
         errors += 1
