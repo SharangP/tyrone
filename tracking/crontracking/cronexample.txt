@@ -1,0 +1,3 @@
+HOME=/home/sphadke/Documents/Experiments/bitly/tracking/crontracking
+
+*/5 * * * * /home/sphadke/Documents/Experiments/bitly/tracking/crontracking/runcron.sh

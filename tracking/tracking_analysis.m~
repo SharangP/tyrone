@@ -1,0 +1,71 @@
+% analyze bitly data
+
+%% setup
+
+fs = 1/(5*60);
+HOT = importdata('hot_phrases_bytime.csv');
+BURSTING = importdata('bursting_phrases.csv');
+
+Unique = unique(HOT.textdata);
+Cells = cell(length(Unique),3);
+
+%% never again
+
+for i = 1:length(Unique)
+    display(i)
+    Cells{i,1} = Unique(i);
+    Cells{i,2} = HOT.data(strcmp(HOT.textdata,Unique(i)),1);
+    Cells{i,3} = HOT.data(strcmp(HOT.textdata,Unique(i)),2);
+end
+
+%% again
+
+for i = 1:length(Cells(:,3))
+    sums(i) = sum(Cells{i,3});
+    lens(i) = length(Cells{i,3});
+end
+
+%% plots
+figure(1)
+hist(HOT.data(:,1),75)
+title('visitors to hot phrase links')
+
+figure(2)
+% what does this mean?!! - profile of the day.
+hist(HOT.data(:,2),17158)
+title('times of hot phrase links')
+
+lots = HOT.textdata(HOT.data(:,1)>=2000);
+ulots = unique(lots);
+
+%%
+
+figure(3)
+count = zeros(length(Unique),1);
+for i = 1:length(Unique)
+    count(i) = sum(strcmp(HOT.textdata,Unique(i)));
+end
+hist(count,300)
+
+%% uniform time scale
+first = min(HOT.data(strcmp(HOT.textdata,'golden globes'),2));
+% last = max(HOT.data(strcmp(HOT.textdata,'golden globes'),2));
+
+DIF = (HOT.data(:,2)-first) - mod(HOT.data(:,2)-first,5*60);
+
+%%
+
+figure(4)
+scatter(HOT.data(:,2),HOT.data(:,1))
+hold on
+
+% visitors = zeros(length(ulots),max(count));
+% times = zeros(length(ulots),max(count));
+
+for i = 1:length(ulots)
+    visitors = HOT.data(strcmp(HOT.textdata,ulots(i)),1);
+    times = HOT.data(strcmp(HOT.textdata,ulots(i)),2);
+    plot(times,visitors,'g');
+%     [H,W] = freqz(visitors-mean(visitors));
+%     plot(W,abs(H));
+end

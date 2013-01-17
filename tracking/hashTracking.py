@@ -4,9 +4,9 @@ import time
 from db import Database
 
 
-log = open('errors.log','w')
+log = open('cronerrors.log','w')
 C = bitly_api.Connection(access_token='61c2b3d767d10e5a58b62d0c7ee1bfa856ac69f8')
-DB = Database('tracking.db')
+DB = Database('crontracking.db')
 
 HighPhrases = {}
 HotPhrases = {}
